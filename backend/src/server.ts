@@ -1,22 +1,12 @@
 import 'dotenv/config';
 
-import { createApp } from './app.js';
-
-const DEFAULT_PORT = 4000;
-
-const rawPort = process.env.PORT;
-const port = rawPort ? Number(rawPort) : DEFAULT_PORT;
-
-if (!Number.isInteger(port) || port < 1 || port > 65535) {
-  throw new Error(`Invalid PORT value: ${rawPort}`);
-}
+import { createApp } from './app/create-app.js';
+import { env } from './config/env.js';
 
 const app = createApp();
 
-const server = app.listen(port, () => {
-  console.log(
-    `[backend] running on http://localhost:${port} (${process.env.NODE_ENV ?? 'development'})`,
-  );
+const server = app.listen(env.PORT, () => {
+  console.log(`[backend] running on http://localhost:${env.PORT} (${env.NODE_ENV})`);
 });
 
 const shutdown = (signal: NodeJS.Signals) => {
