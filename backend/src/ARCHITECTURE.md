@@ -56,13 +56,13 @@ Business logic should not depend directly on framework-specific transport concer
 Expected backend flow:
 
 GraphQL Resolver
-    ↓
+↓
 Service
-    ↓
+↓
 Repository
-    ↓
+↓
 Mongoose Model
-    ↓
+↓
 MongoDB
 
 Resolvers should primarily handle transport concerns.
