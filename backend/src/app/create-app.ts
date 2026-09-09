@@ -1,7 +1,10 @@
 import express from 'express';
-import type { Express, NextFunction, Request, Response } from 'express';
+import type { Express } from 'express';
 
 import { env } from '../config/env.js';
+import userRoutes from '../modules/users/user.routes.js';
+import authRoutes from '../modules/auth/auth.routes.js';
+import { errorHandler } from '../shared/middleware/error-handler.js';
 
 export const createApp = (): Express => {
   const app = express();
@@ -23,6 +26,9 @@ export const createApp = (): Express => {
     });
   });
 
+  app.use('/api/users', userRoutes);
+  app.use('/api/auth', authRoutes);
+
   app.use((_req, res) => {
     res.status(404).json({
       status: 'error',
@@ -30,20 +36,6 @@ export const createApp = (): Express => {
       message: 'Route not found',
     });
   });
-
-  app.use((error: unknown, _req: Request, res: Response, _next: NextFunction) => {
-    console.error('[backend] unhandled error:', error);
-
-    if (res.headersSent) {
-      return;
-    }
-
-    res.status(500).json({
-      status: 'error',
-      code: 'INTERNAL_SERVER_ERROR',
-      message: 'Internal server error',
-    });
-  });
-
+  app.use(errorHandler);
   return app;
 };
