@@ -26,7 +26,11 @@ export class UserService {
       lastName: input.lastName.trim(),
       email,
       passwordHash,
+      
       ...(input.phone ? { phone: input.phone.trim() } : {}),
+      ...(input.role
+        ? { role: input.role }
+        : {}),
     });
 
     return {

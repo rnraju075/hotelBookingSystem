@@ -13,11 +13,7 @@ export const createUserSchema = z.object({
     .min(2, 'Last name must contain at least 2 characters')
     .max(50, 'Last name cannot exceed 50 characters'),
 
-  email: z
-    .string()
-    .trim()
-    .toLowerCase()
-    .email('Invalid email address'),
+  email: z.string().trim().toLowerCase().email('Invalid email address'),
 
   password: z
     .string()
@@ -30,6 +26,8 @@ export const createUserSchema = z.object({
     .min(7, 'Phone number is too short')
     .max(20, 'Phone number is too long')
     .optional(),
+
+  role: z.enum(['CUSTOMER', 'HOTEL_MANAGER', 'ADMIN']).optional(),
 });
 
 export type CreateUserInput = z.infer<typeof createUserSchema>;
