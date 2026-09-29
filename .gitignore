@@ -67,3 +67,6 @@ Thumbs.db
 # Docker local overrides
 # ================================
 docker-compose.override.yml
+
+# TypeScript generated output
+backend/tsconfig-output.json

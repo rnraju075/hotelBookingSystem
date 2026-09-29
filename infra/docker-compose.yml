@@ -1,7 +1,43 @@
 services:
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+
+    container_name: hotel-booking-backend
+
+    restart: unless-stopped
+
+    ports:
+      - "${BACKEND_PORT}:4000"
+
+    environment:
+      NODE_ENV: development
+      PORT: 4000
+
+      MONGODB_URI: mongodb://${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@mongodb:27017/${MONGO_DATABASE}?authSource=admin
+
+      REDIS_URL: redis://redis:6379
+
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+
+      JWT_ACCESS_EXPIRES_IN: ${JWT_ACCESS_EXPIRES_IN}
+      JWT_REFRESH_EXPIRES_IN: ${JWT_REFRESH_EXPIRES_IN}
+
+    depends_on:
+      mongodb:
+        condition: service_healthy
+
+      redis:
+        condition: service_healthy
+
+
   mongodb:
     image: mongo:8.0
+
     container_name: hotel-booking-mongodb
+
     restart: unless-stopped
 
     ports:
@@ -21,14 +57,18 @@ services:
           "CMD-SHELL",
           "mongosh --quiet --eval \"db.adminCommand('ping').ok\"",
         ]
+
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 20s
 
+
   redis:
     image: redis:8-alpine
+
     container_name: hotel-booking-redis
+
     restart: unless-stopped
 
     ports:
@@ -44,10 +84,12 @@ services:
           "redis-cli",
           "ping",
         ]
+
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 5s
+
 
 volumes:
   mongodb_data:
