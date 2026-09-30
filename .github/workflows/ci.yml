@@ -22,10 +22,12 @@ jobs:
         image: mongo:8.0
         ports:
           - 27017:27017
+
         env:
           MONGO_INITDB_ROOT_USERNAME: hotel_admin
           MONGO_INITDB_ROOT_PASSWORD: hotel_local_password
           MONGO_INITDB_DATABASE: hotel_booking_test
+
         options: >-
           --health-cmd "mongosh --quiet --eval \"db.adminCommand('ping').ok\""
           --health-interval 10s
@@ -37,6 +39,7 @@ jobs:
         image: redis:8-alpine
         ports:
           - 6379:6379
+
         options: >-
           --health-cmd "redis-cli ping"
           --health-interval 10s
@@ -85,3 +88,6 @@ jobs:
 
       - name: Build application
         run: npm run build
+
+      - name: Build Docker image
+        run: docker build -t hotel-booking-backend:ci .
