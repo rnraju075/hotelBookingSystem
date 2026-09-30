@@ -1,4 +1,3 @@
-/// <reference path="../../../src/shared/types/express.d.ts" />
 
 import {
     beforeEach,
