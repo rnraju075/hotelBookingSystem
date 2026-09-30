@@ -17,6 +17,46 @@ jobs:
       run:
         working-directory: backend
 
+    services:
+      mongodb:
+        image: mongo:8.0
+        ports:
+          - 27017:27017
+        env:
+          MONGO_INITDB_ROOT_USERNAME: hotel_admin
+          MONGO_INITDB_ROOT_PASSWORD: hotel_local_password
+          MONGO_INITDB_DATABASE: hotel_booking_test
+        options: >-
+          --health-cmd "mongosh --quiet --eval \"db.adminCommand('ping').ok\""
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+          --health-start-period 20s
+
+      redis:
+        image: redis:8-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      NODE_ENV: test
+      PORT: 4001
+
+      MONGODB_URI: mongodb://hotel_admin:hotel_local_password@localhost:27017/hotel_booking_test?authSource=admin
+
+      REDIS_URL: redis://localhost:6379
+
+      JWT_ACCESS_SECRET: test-access-secret-that-is-at-least-32-characters-long
+      JWT_REFRESH_SECRET: test-refresh-secret-that-is-at-least-32-characters-long
+
+      JWT_ACCESS_EXPIRES_IN: 15m
+      JWT_REFRESH_EXPIRES_IN: 7d
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -39,6 +79,9 @@ jobs:
 
       - name: Run unit tests
         run: npm run test:unit
+
+      - name: Run integration tests
+        run: npm run test:integration
 
       - name: Build application
         run: npm run build
